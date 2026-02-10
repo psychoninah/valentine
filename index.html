@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine’s 💖</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #ffb3c6, #ffe5ec);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 16px;
+  transition: background 0.5s ease;
+}
+
+/* LOCK SCREEN */
+.lock-screen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, #ff758f, #ffb3c6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  z-index: 10;
+  text-align: center;
+}
+
+.tap {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* CARD */
+.card {
+  width: 100%;
+  max-width: 360px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  display: none;
+  position: relative;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.card.hide {
+  transform: scale(0.8);
+  opacity: 0;
+}
+
+/* CARD HEADER */
+h2 {
+  color: #ff4d6d;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: #555;
+  margin-bottom: 16px;
+}
+
+/* FLOWER GAME */
+.game {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.flower {
+  background: #ff4d6d;
+  color: white;
+  padding: 18px 10px;
+  border-radius: 18px;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.flower:active {
+  transform: scale(0.95);
+}
+
+.flower.opened {
+  background: #fff0f5;
+  color: #ff4d6d;
+  font-size: 0.9rem;
+  cursor: default;
+}
+
+/* OPEN TEXT */
+.open-text {
+  display: none;
+  margin-top: 14px;
+  font-size: 1rem;
+  color: #ff4d6d;
+  animation: pulse 1.5s infinite;
+}
+
+/* ENVELOPE */
+.envelope-container {
+  display: none;
+  margin-top: 10px;
+  position: relative;
+  width: 260px;
+  height: 180px;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+.envelope {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ff4d6d;
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+}
+
+.envelope::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #ff758f;
+  clip-path: polygon(0 0, 50% 55%, 100% 0);
+  transform-origin: top;
+  transition: transform 1s cubic-bezier(0.22,1,0.36,1);
+}
+
+.envelope.open::before {
+  transform: rotateX(180deg);
+}
+
+/* PAPER (scrollable letter) */
+.paper {
+  position: relative;
+  width: 100%;
+  max-height: 220px;
+  background: #fff0f5;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.5;
+  display: block; /* visible immediately */
+  margin-top: 16px;
+  text-align: left;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transform: translateY(110%);
+  transition: transform 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+
+/* envelope open + paper slides up */
+.envelope.open .paper {
+  transform: translateY(0);
+}
+
+/* BACK BUTTON */
+.back-btn {
+  display: none;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #ff4d6d;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.back-btn:active {
+  transform: scale(0.95);
+}
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div class="lock-screen" onclick="unlock()">
+  <h1>For You 🩷</h1>
+  <p>A small Valentine surprise</p>
+  <div class="tap">Tap to Unlock 💌</div>
+</div>
+
+<!-- CARD -->
+<div class="card" id="card">
+  <h2>Happy Valentine’s 🌹</h2>
+  <p class="subtitle">Collect the flowers first 💐</p>
+
+  <!-- FLOWER GAME -->
+  <div class="game">
+    <div class="flower" data-emoji="🌷">🌷</div>
+    <div class="flower" data-emoji="🌹">🌹</div>
+    <div class="flower" data-emoji="🌸">🌸</div>
+    <div class="flower" data-emoji="💐">💐</div>
+  </div>
+
+  <div class="open-text" id="openText">Bouquet complete 💐 Open this 💌</div>
+
+  <!-- ENVELOPE -->
+  <div class="envelope-container" id="envelopeBox">
+    <div class="envelope" id="envelope">
+      <div class="paper" id="letter"></div>
+    </div>
+  </div>
+
+  <!-- BACK BUTTON -->
+  <button class="back-btn" id="backBtn" onclick="backToLock()">← Back</button>
+</div>
+
+<!-- MUSIC -->
+<audio id="music" loop>
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const fullMessage = `Happy Valentine’s Day.
+I’ve been thinking about whether to write this, and I realized that even if our talking stage ended, the feelings I had didn’t just disappear. Life and schedules pulled us in different directions, and I understand that. Still, I didn’t want this day to pass without letting you know what you meant to me.
+What we shared—no matter how brief—was genuine. The conversations, the laughs, the quiet moments where it felt easy to talk to you… those stayed with me. You reminded me how nice it is to feel connected to someone, even in the middle of busy days and long weeks.
+I don’t write this with expectations or pressure. I just wanted to be honest. I care about you, and a part of me always will. And while I respect where we are now, I can’t deny that I still quietly hope that maybe—at a better time, when things are lighter—our paths might cross again.
+And if they don’t, I’m still grateful for what we had.
+I hope life has been kind to you lately. I hope you’re happy, healthy, and chasing the things that matter to you.
+This Valentine’s Day, I’m sending you nothing but warmth and good thoughts.
+
+— fhenie`;
+
+function unlock() {
+  document.querySelector(".lock-screen").style.display = "none";
+  const card = document.getElementById("card");
+  card.style.display = "block";
+  document.getElementById("music").play();
+}
+
+const compliments = [
+  "You brighten every room 🌷",
+  "You are deeply appreciated 🌹",
+  "You make life more beautiful 🌸",
+  "You are truly special 💐"
+];
+
+const flowers = document.querySelectorAll(".flower");
+let picked = 0;
+
+flowers.forEach((flower, i) => {
+  flower.addEventListener("click", () => {
+    if (flower.classList.contains("opened")) return;
+    flower.classList.add("opened");
+    flower.textContent = compliments[i];
+    picked++;
+    if (picked === flowers.length) {
+      document.getElementById("openText").style.display = "block";
+      document.getElementById("envelopeBox").style.display = "block";
+
+      // open envelope & slide paper while typing
+      const envelope = document.getElementById("envelope");
+      envelope.classList.add("open");
+
+      typeWriter(fullMessage, document.getElementById("letter"));
+      document.getElementById("backBtn").style.display = "inline-block";
+    }
+  });
+});
+
+// TYPEWRITER EFFECT
+function typeWriter(text, element, i = 0) {
+  element.innerHTML = "";
+  element.style.display = "block";
+  function typing() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i) === "\n" ? "<br><br>" : text.charAt(i);
+      i++;
+      requestAnimationFrame(typing);
+    }
+  }
+  typing();
+}
+
+// BACK BUTTON FUNCTION
+function backToLock() {
+  const card = document.getElementById("card");
+  card.classList.add("hide");
+  setTimeout(() => {
+    card.style.display = "none";
+    card.classList.remove("hide");
+    document.querySelector(".lock-screen").style.display = "flex";
+    document.getElementById("letter").innerHTML = "";
+    document.getElementById("openText").style.display = "none";
+    document.getElementById("envelopeBox").classList.remove("open");
+    document.getElementById("envelopeBox").style.display = "none";
+    document.getElementById("backBtn").style.display = "none";
+    flowers.forEach(f => {
+      f.classList.remove("opened");
+      f.textContent = f.dataset.emoji;
+    });
+  }, 400);
+}
+</script>
+
+</body>
+</html>
